@@ -10,7 +10,7 @@ import UIKit
 
 class ToDoListViewController: UITableViewController {
     
-    var listArray = ["Mike", "Egg", "John Snow"]
+    var listArray = [Item]()
     let defaults = UserDefaults.standard
 
     override func viewDidLoad() {
@@ -20,24 +20,32 @@ class ToDoListViewController: UITableViewController {
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addbutton))
         
         
-        if let itemArray = defaults.array(forKey: "ToDoListArray") as? [String] {
-            listArray = itemArray
+        let newItem = Item()
+        newItem.title = "Go go go"
+        listArray.append(newItem)
+        let newitem2 = Item()
+        newitem2.title = "Go home"
+        listArray.append(newitem2)
+        
+        if listArray = defaults.array(forKey: "ToDoListArray") as! [String] {
             
+            
+            listArray = Item
         }
         
-        
+//        if let itemArray = defaults.array(forKey: "ToDoListArray") as? [String] {
+//            listArray = itemArray
+//
+//
+//        }
     }
     
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
         
-        cell.textLabel?.text = listArray[indexPath.row]
-        
-        
-       
+        cell.textLabel?.text = listArray[indexPath.row].title
         return cell
-        
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -46,7 +54,6 @@ class ToDoListViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        print(listArray[indexPath.row])
         tableView.deselectRow(at: indexPath, animated: true)
         
         
@@ -62,14 +69,16 @@ class ToDoListViewController: UITableViewController {
     @objc  func addbutton(){
         
         var textField = UITextField()
-        
         let alert = UIAlertController(title: "Add new Todaya Item", message: "", preferredStyle: .alert)
-        
         let action = UIAlertAction(title: "Add Item", style: .default) { (action) in
             print("success")
-            self.listArray.append(textField.text ?? "New Item")
+            
+            let newItem = Item()
+            newItem.title = textField.text!
+            self.listArray.append(newItem)
             
             self.defaults.set(self.listArray, forKey: "ToDoListArray")
+            
             
             self.tableView.reloadData()
         }
@@ -77,7 +86,7 @@ class ToDoListViewController: UITableViewController {
         alert.addTextField { (alertText) in
             alertText.placeholder = "Input new item"
             textField = alertText
-            print(alertText)
+            
         }
         alert.addAction(action)
         present(alert, animated: true)
